@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3C Character Pose Builder · 3C Thread To Success</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070f;
+  --surface: #0f0f1c;
+  --surface2: #161626;
+  --surface3: #1d1d32;
+  --border: #252545;
+  --border-light: #32325a;
+  --purple: #7c3aed;
+  --purple-mid: #9333ea;
+  --purple-light: #a855f7;
+  --gold: #f5a623;
+  --gold-light: #fbbf24;
+  --gold-dim: #c4861c;
+  --text: #e8e8f5;
+  --text-muted: #7777aa;
+  --text-dim: #444466;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ─── HEADER ─────────────────────────────────────────── */
+header {
+  height: 64px;
+  background: linear-gradient(135deg, #120822 0%, #0f0f1c 60%, #0a0a16 100%);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  gap: 12px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--purple), var(--gold), var(--purple), transparent);
+  opacity: 0.6;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.brand-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--purple) 0%, var(--gold) 100%);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 0 20px rgba(124,58,237,0.4);
+}
+
+.brand-text h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+.brand-text p {
+  font-size: 9px;
+  color: var(--gold);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+.header-fields {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.field {
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 7px 11px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field:focus { border-color: var(--purple); box-shadow: 0 0 0 2px rgba(124,58,237,0.15); }
+.field::placeholder { color: var(--text-dim); }
+.field option { background: var(--surface2); }
+
+#charName  { width: 160px; }
+#poseTitle { width: 210px; }
+#emotion   { width: 130px; }
+#facing    { width: 120px; }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn:active { transform: scale(0.97); }
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.btn-ghost:hover { border-color: var(--border-light); color: var(--text); }
+
+.btn-purple {
+  background: linear-gradient(135deg, var(--purple), var(--purple-mid));
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(124,58,237,0.3);
+}
+.btn-purple:hover { box-shadow: 0 4px 20px rgba(124,58,237,0.5); transform: translateY(-1px); }
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: #1a0800;
+  box-shadow: 0 2px 12px rgba(245,166,35,0.3);
+}
+.btn-gold:hover { box-shadow: 0 4px 20px rgba(245,166,35,0.5); transform: translateY(-1px); }
+
+/* ─── MAIN LAYOUT ─────────────────────────────────────── */
+.app-body {
+  display: grid;
+  grid-template-columns: 1fr 370px;
+  height: calc(100vh - 64px - 32px);
+}
+
+/* ─── LEFT PANEL: CANVAS ──────────────────────────────── */
+.canvas-panel {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.panel-bar {
+  padding: 10px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.panel-label {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.panel-actions { display: flex; gap: 6px; align-items: center; }
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 11px;
+  border-radius: 6px;
+}
+
+.canvas-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 40%, rgba(124,58,237,0.07) 0%, transparent 70%),
+    var(--bg);
+}
+
+.canvas-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(124,58,237,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,58,237,0.06) 1px, transparent 1px);
+  background-size: 36px 36px;
+  pointer-events: none;
+}
+
+#skeletonCanvas {
+  position: relative;
+  z-index: 1;
+  cursor: crosshair;
+  border-radius: 4px;
+}
+
+.canvas-hint {
+  position: absolute;
+  bottom: 10px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.55);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(4px);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 10px;
+  color: var(--text-muted);
+  pointer-events: none;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.preset-bar {
+  padding: 8px 16px;
+  background: var(--surface2);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.preset-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-right: 4px;
+}
+
+/* ─── RIGHT PANEL: BIBLE ──────────────────────────────── */
+.bible-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.bible-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bible-scroll::-webkit-scrollbar { width: 3px; }
+.bible-scroll::-webkit-scrollbar-track { background: transparent; }
+.bible-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.section-tag {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--purple-light);
+  padding: 6px 0 4px;
+  border-bottom: 1px solid var(--border);
+  margin-top: 2px;
+}
+
+/* ─── UPLOAD SLOT ─────────────────────────────────────── */
+.slot {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  transition: border-color 0.2s;
+}
+.slot:hover { border-color: var(--border-light); }
+
+.slot-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.slot-thumb {
+  width: 50px; height: 50px;
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border-light);
+  background: var(--surface3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.slot-thumb:hover { border-color: var(--gold); transform: scale(1.04); }
+.slot-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 7px; }
+
+.slot-body { flex: 1; min-width: 0; }
+
+.slot-name {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+  letter-spacing: 0.3px;
+}
+
+.slot-desc {
+  width: 100%;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 5px 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 10.5px;
+  outline: none;
+  resize: none;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+}
+.slot-desc:focus { border-color: var(--purple); }
+.slot-desc::placeholder { color: var(--text-dim); }
+
+.slot-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.colour-pick {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 10px; color: var(--text-muted);
+}
+input[type="color"] {
+  width: 26px; height: 22px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: none; cursor: pointer; padding: 1px;
+}
+
+.btn-up {
+  font-size: 10px; padding: 3px 9px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--surface3);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.btn-up:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+.btn-clr {
+  font-size: 10px; padding: 3px 8px;
+  border-radius: 5px;
+  border: 1px solid #2a1515;
+  background: transparent;
+  color: #774444;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  transition: all 0.2s;
+  margin-left: auto;
+}
+.btn-clr:hover { border-color: var(--danger); color: var(--danger); }
+
+input[type="file"] { display: none; }
+
+/* ─── PROMPT BOX ──────────────────────────────────────── */
+.prompt-box {
+  background: linear-gradient(135deg, #0d0d20, #12122a);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-top: 2px;
+}
+
+.prompt-box-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.prompt-text {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  font-style: italic;
+  min-height: 56px;
+  word-break: break-word;
+}
+
+.btn-copy {
+  width: 100%;
+  margin-top: 8px;
+  font-size: 11px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface3);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.btn-copy:hover { border-color: var(--purple); color: var(--purple-light); }
+
+/* ─── FOOTER ──────────────────────────────────────────── */
+footer {
+  height: 32px;
+  background: var(--surface2);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.3px;
+}
+footer em { color: var(--gold); font-style: normal; }
+
+/* ─── TOAST ───────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 48px; right: 20px;
+  background: linear-gradient(135deg, #2a1060, #4a1e9e);
+  border: 1px solid var(--purple);
+  color: #fff;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 8px 30px rgba(124,58,237,0.45);
+  z-index: 9999;
+  transform: translateY(60px); opacity: 0;
+  transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══════════════════════════════════════════════ -->
+<header>
+  <div class="brand">
+    <div class="brand-icon">🎭</div>
+    <div class="brand-text">
+      <h1>3C Character Pose Builder</h1>
+      <p>3C Thread To Success · Cooking Lab</p>
+    </div>
+  </div>
+
+  <div class="header-fields">
+    <input id="charName"  class="field" type="text" placeholder="Character name e.g. Aurion">
+    <input id="poseTitle" class="field" type="text" placeholder="Title e.g. Aurion smiling standing">
+    <select id="emotion" class="field">
+      <option value="">Emotion…</option>
+      <option>Confident</option><option>Happy</option><option>Smiling</option>
+      <option>Fierce</option><option>Calm</option><option>Surprised</option>
+      <option>Thinking</option><option>Sad</option><option>Excited</option>
+      <option>Determined</option><option>Playful</option><option>Heroic</option>
+    </select>
+    <select id="facing" class="field">
+      <option value="front">Front View</option>
+      <option value="three_quarter">¾ View</option>
+      <option value="left">Left Side</option>
+      <option value="right">Right Side</option>
+      <option value="back">Back View</option>
+    </select>
+  </div>
+
+  <div class="header-actions">
+    <button class="btn btn-ghost btn-sm" onclick="loadJSON()">📂 Load</button>
+    <button class="btn btn-purple btn-sm" onclick="downloadCanvas()">🖼 PNG</button>
+    <button class="btn btn-gold btn-sm" onclick="exportJSON()">💾 Export JSON</button>
+  </div>
+</header>
+
+<!-- ═══ APP BODY ═══════════════════════════════════════════════ -->
+<div class="app-body">
+
+  <!-- LEFT: SKELETON CANVAS -->
+  <div class="canvas-panel">
+    <div class="panel-bar">
+      <span class="panel-label">⚡ Pose Canvas — Drag Joints</span>
+      <div class="panel-actions">
+        <button class="btn btn-ghost btn-sm" onclick="resetPose()">↺ Reset</button>
+        <button class="btn btn-ghost btn-sm" onclick="mirrorPose()">⟷ Mirror</button>
+      </div>
+    </div>
+
+    <div class="canvas-area">
+      <div class="canvas-grid"></div>
+      <canvas id="skeletonCanvas" width="430" height="540"></canvas>
+      <div class="canvas-hint">🖱 Drag gold circles to pose · Purple lines = bones</div>
+    </div>
+
+    <div class="preset-bar">
+      <span class="preset-label">Quick:</span>
+      <button class="btn btn-ghost btn-sm" onclick="applyPreset('standing')">🧍 Stand</button>
+      <button class="btn btn-ghost btn-sm" onclick="applyPreset('arms_out')">🙌 Arms Out</button>
+      <button class="btn btn-ghost btn-sm" onclick="applyPreset('thumbs_up')">👍 Thumbs Up</button>
+      <button class="btn btn-ghost btn-sm" onclick="applyPreset('running')">🏃 Running</button>
+      <button class="btn btn-ghost btn-sm" onclick="applyPreset('sitting')">🪑 Sitting</button>
+      <button class="btn btn-ghost btn-sm" onclick="applyPreset('flying')">🦸 Flying</button>
+      <button class="btn btn-ghost btn-sm" onclick="applyPreset('pointing')">👉 Pointing</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: CHARACTER BIBLE -->
+  <div class="bible-panel">
+    <div class="panel-bar">
+      <span class="panel-label">📖 Character Bible</span>
+    </div>
+    <div class="bible-scroll" id="bibleScroll">
+
+      <div class="section-tag">Face Features</div>
+
+      <!-- HAIR -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-hair" onclick="triggerUpload('hair')">💇</div>
+          <div class="slot-body">
+            <div class="slot-name">Hair Style & Colour</div>
+            <textarea class="slot-desc" id="desc-hair" rows="2" placeholder="e.g. short natural curls, dark brown with purple highlights"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <div class="colour-pick">Colour: <input type="color" id="col-hair" value="#1a0a00"></div>
+          <button class="btn-up" onclick="triggerUpload('hair')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('hair')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-hair" accept="image/*" onchange="handleUpload(event,'hair')">
+      </div>
+
+      <!-- EYES -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-eyes" onclick="triggerUpload('eyes')">👁</div>
+          <div class="slot-body">
+            <div class="slot-name">Eyes Shape & Colour</div>
+            <textarea class="slot-desc" id="desc-eyes" rows="2" placeholder="e.g. large round eyes, bright blue, thick lashes, cartoon shine"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <div class="colour-pick">Colour: <input type="color" id="col-eyes" value="#4169e1"></div>
+          <button class="btn-up" onclick="triggerUpload('eyes')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('eyes')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-eyes" accept="image/*" onchange="handleUpload(event,'eyes')">
+      </div>
+
+      <!-- NOSE -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-nose" onclick="triggerUpload('nose')">👃</div>
+          <div class="slot-body">
+            <div class="slot-name">Nose Shape</div>
+            <textarea class="slot-desc" id="desc-nose" rows="2" placeholder="e.g. small rounded button nose, soft tip, subtle nostrils"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <button class="btn-up" onclick="triggerUpload('nose')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('nose')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-nose" accept="image/*" onchange="handleUpload(event,'nose')">
+      </div>
+
+      <!-- LIPS -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-lips" onclick="triggerUpload('lips')">💋</div>
+          <div class="slot-body">
+            <div class="slot-name">Lips Style</div>
+            <textarea class="slot-desc" id="desc-lips" rows="2" placeholder="e.g. full lips, warm smile, slight rosy tint, playful expression"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <div class="colour-pick">Colour: <input type="color" id="col-lips" value="#c47a5a"></div>
+          <button class="btn-up" onclick="triggerUpload('lips')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('lips')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-lips" accept="image/*" onchange="handleUpload(event,'lips')">
+      </div>
+
+      <!-- SKIN -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-skin" onclick="triggerUpload('skin')">🎨</div>
+          <div class="slot-body">
+            <div class="slot-name">Skin Tone</div>
+            <textarea class="slot-desc" id="desc-skin" rows="2" placeholder="e.g. warm medium-dark brown, smooth 3D cartoon finish, subtle blush cheeks"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <div class="colour-pick">Tone: <input type="color" id="col-skin" value="#8B5E3C"></div>
+          <button class="btn-up" onclick="triggerUpload('skin')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('skin')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-skin" accept="image/*" onchange="handleUpload(event,'skin')">
+      </div>
+
+      <div class="section-tag">Body & Hands</div>
+
+      <!-- HANDS -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-hands" onclick="triggerUpload('hands')">🤲</div>
+          <div class="slot-body">
+            <div class="slot-name">Hands Style</div>
+            <textarea class="slot-desc" id="desc-hands" rows="2" placeholder="e.g. small cartoon hands, chubby fingers, warm brown, gold wristbands"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <button class="btn-up" onclick="triggerUpload('hands')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('hands')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-hands" accept="image/*" onchange="handleUpload(event,'hands')">
+      </div>
+
+      <div class="section-tag">Outfit & Accessories</div>
+
+      <!-- OUTFIT TOP -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-top" onclick="triggerUpload('top')">👕</div>
+          <div class="slot-body">
+            <div class="slot-name">Outfit Top</div>
+            <textarea class="slot-desc" id="desc-top" rows="2" placeholder="e.g. purple superhero suit, gold diamond shield logo on chest, armour panelling"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <div class="colour-pick">Colour: <input type="color" id="col-top" value="#5b21b6"></div>
+          <button class="btn-up" onclick="triggerUpload('top')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('top')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-top" accept="image/*" onchange="handleUpload(event,'top')">
+      </div>
+
+      <!-- OUTFIT BOTTOM -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-bottom" onclick="triggerUpload('bottom')">👖</div>
+          <div class="slot-body">
+            <div class="slot-name">Outfit Bottom</div>
+            <textarea class="slot-desc" id="desc-bottom" rows="2" placeholder="e.g. dark navy shorts, armour detail panels, gold trim edges"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <div class="colour-pick">Colour: <input type="color" id="col-bottom" value="#1e1b4b"></div>
+          <button class="btn-up" onclick="triggerUpload('bottom')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('bottom')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-bottom" accept="image/*" onchange="handleUpload(event,'bottom')">
+      </div>
+
+      <!-- SHOES -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-shoes" onclick="triggerUpload('shoes')">👟</div>
+          <div class="slot-body">
+            <div class="slot-name">Shoes / Boots</div>
+            <textarea class="slot-desc" id="desc-shoes" rows="2" placeholder="e.g. purple armour boots, gold trim, ankle height, rounded toe"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <div class="colour-pick">Colour: <input type="color" id="col-shoes" value="#4c1d95"></div>
+          <button class="btn-up" onclick="triggerUpload('shoes')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('shoes')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-shoes" accept="image/*" onchange="handleUpload(event,'shoes')">
+      </div>
+
+      <!-- CAPE -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-cape" onclick="triggerUpload('cape')">🦸</div>
+          <div class="slot-body">
+            <div class="slot-name">Cape / Extra Layer</div>
+            <textarea class="slot-desc" id="desc-cape" rows="2" placeholder="e.g. full purple flowing cape, gold inner lining, attached at shoulders"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <div class="colour-pick">Colour: <input type="color" id="col-cape" value="#6d28d9"></div>
+          <button class="btn-up" onclick="triggerUpload('cape')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('cape')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-cape" accept="image/*" onchange="handleUpload(event,'cape')">
+      </div>
+
+      <!-- ACCESSORIES -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-accessories" onclick="triggerUpload('accessories')">💎</div>
+          <div class="slot-body">
+            <div class="slot-name">Accessories</div>
+            <textarea class="slot-desc" id="desc-accessories" rows="2" placeholder="e.g. gold wristbands, glowing energy particles, 3C badge, power aura"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <button class="btn-up" onclick="triggerUpload('accessories')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('accessories')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-accessories" accept="image/*" onchange="handleUpload(event,'accessories')">
+      </div>
+
+      <!-- AI PROMPT -->
+      <div class="prompt-box">
+        <span class="prompt-box-label">⚡ Auto-Generated AI Prompt</span>
+        <div class="prompt-text" id="promptPreview">Fill in character details above to generate your AI prompt…</div>
+        <button class="btn-copy" onclick="copyPrompt()">📋 Copy Prompt to Clipboard</button>
+      </div>
+
+    </div><!-- /bible-scroll -->
+  </div><!-- /bible-panel -->
+
+</div><!-- /app-body -->
+
+<!-- ═══ FOOTER ═════════════════════════════════════════════════ -->
+<footer>
+  Built with <em>LOVE</em> by Claude (Anthropic) × Chef Anica · <em>3C Thread To Success Cooking Lab 🧪👨‍🍳</em>
+</footer>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="loadJSONFile" accept=".json" onchange="handleLoadJSON(event)">
+
+<!-- ═══ JAVASCRIPT ══════════════════════════════════════════════ -->
+<script>
+/* ─── SKELETON DATA ──────────────────────────────────────────── */
+const canvas = document.getElementById('skeletonCanvas');
+const ctx    = canvas.getContext('2d');
+const CW = canvas.width, CH = canvas.height;
+const CX = CW / 2;
+
+const DEFAULT = {
+  head:           { x: CX,      y: 65  },
+  neck:           { x: CX,      y: 102 },
+  shoulder_left:  { x: CX - 58, y: 138 },
+  shoulder_right: { x: CX + 58, y: 138 },
+  elbow_left:     { x: CX - 80, y: 195 },
+  elbow_right:    { x: CX + 80, y: 195 },
+  wrist_left:     { x: CX - 95, y: 248 },
+  wrist_right:    { x: CX + 95, y: 248 },
+  hip_left:       { x: CX - 38, y: 278 },
+  hip_right:      { x: CX + 38, y: 278 },
+  knee_left:      { x: CX - 42, y: 368 },
+  knee_right:     { x: CX + 42, y: 368 },
+  ankle_left:     { x: CX - 44, y: 454 },
+  ankle_right:    { x: CX + 44, y: 454 },
+  foot_left:      { x: CX - 54, y: 478 },
+  foot_right:     { x: CX + 54, y: 478 }
+};
+
+const PRESETS = {
+  standing: JSON.parse(JSON.stringify(DEFAULT)),
+  arms_out: { ...JSON.parse(JSON.stringify(DEFAULT)), elbow_left: { x: CX-115, y: 138 }, elbow_right: { x: CX+115, y: 138 }, wrist_left: { x: CX-165, y: 138 }, wrist_right: { x: CX+165, y: 138 } },
+  thumbs_up: { ...JSON.parse(JSON.stringify(DEFAULT)), elbow_right: { x: CX+70, y: 165 }, wrist_right: { x: CX+55, y: 108 } },
+  running: { head:{x:CX+12,y:60}, neck:{x:CX+8,y:97}, shoulder_left:{x:CX-50,y:128}, shoulder_right:{x:CX+66,y:132}, elbow_left:{x:CX-20,y:168}, elbow_right:{x:CX+105,y:178}, wrist_left:{x:CX-8,y:120}, wrist_right:{x:CX+128,y:220}, hip_left:{x:CX-35,y:268}, hip_right:{x:CX+42,y:272}, knee_left:{x:CX-70,y:355}, knee_right:{x:CX+68,y:345}, ankle_left:{x:CX-80,y:440}, ankle_right:{x:CX+80,y:418}, foot_left:{x:CX-95,y:462}, foot_right:{x:CX+90,y:438} },
+  sitting: { head:{x:CX,y:80}, neck:{x:CX,y:117}, shoulder_left:{x:CX-58,y:152}, shoulder_right:{x:CX+58,y:152}, elbow_left:{x:CX-80,y:210}, elbow_right:{x:CX+80,y:210}, wrist_left:{x:CX-80,y:270}, wrist_right:{x:CX+80,y:270}, hip_left:{x:CX-50,y:300}, hip_right:{x:CX+50,y:300}, knee_left:{x:CX-110,y:300}, knee_right:{x:CX+110,y:300}, ankle_left:{x:CX-110,y:390}, ankle_right:{x:CX+110,y:390}, foot_left:{x:CX-125,y:412}, foot_right:{x:CX+125,y:412} },
+  flying: { head:{x:CX,y:58}, neck:{x:CX,y:94}, shoulder_left:{x:CX-60,y:122}, shoulder_right:{x:CX+60,y:122}, elbow_left:{x:CX-120,y:108}, elbow_right:{x:CX+120,y:108}, wrist_left:{x:CX-170,y:92}, wrist_right:{x:CX+170,y:92}, hip_left:{x:CX-35,y:265}, hip_right:{x:CX+35,y:265}, knee_left:{x:CX-48,y:355}, knee_right:{x:CX+48,y:355}, ankle_left:{x:CX-52,y:440}, ankle_right:{x:CX+52,y:440}, foot_left:{x:CX-62,y:464}, foot_right:{x:CX+62,y:464} },
+  pointing: { ...JSON.parse(JSON.stringify(DEFAULT)), elbow_right:{x:CX+95,y:160}, wrist_right:{x:CX+155,y:130} }
+};
+
+const BONES = [
+  ['head','neck'],
+  ['neck','shoulder_left'],  ['neck','shoulder_right'],
+  ['shoulder_left','elbow_left'],   ['elbow_left','wrist_left'],
+  ['shoulder_right','elbow_right'], ['elbow_right','wrist_right'],
+  ['neck','hip_left'], ['neck','hip_right'],
+  ['hip_left','hip_right'],
+  ['hip_left','knee_left'],   ['knee_left','ankle_left'],   ['ankle_left','foot_left'],
+  ['hip_right','knee_right'], ['knee_right','ankle_right'], ['ankle_right','foot_right']
+];
+
+let joints   = JSON.parse(JSON.stringify(DEFAULT));
+let dragging = null;
+let offX = 0, offY = 0;
+const JR = 9; // joint radius
+
+/* ─── DRAW ───────────────────────────────────────────────────── */
+function draw() {
+  ctx.clearRect(0, 0, CW, CH);
+
+  // Bones
+  ctx.save();
+  ctx.strokeStyle = '#7c3aed';
+  ctx.lineWidth = 4.5;
+  ctx.lineCap = 'round';
+  BONES.forEach(([a, b]) => {
+    ctx.beginPath();
+    ctx.moveTo(joints[a].x, joints[a].y);
+    ctx.lineTo(joints[b].x, joints[b].y);
+    ctx.stroke();
+  });
+  ctx.restore();
+
+  // Torso fill (for visual clarity)
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(joints.shoulder_left.x, joints.shoulder_left.y);
+  ctx.lineTo(joints.shoulder_right.x, joints.shoulder_right.y);
+  ctx.lineTo(joints.hip_right.x, joints.hip_right.y);
+  ctx.lineTo(joints.hip_left.x, joints.hip_left.y);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(124,58,237,0.12)';
+  ctx.fill();
+  ctx.restore();
+
+  // Head circle outline
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(joints.head.x, joints.head.y, 30, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(245,166,35,0.3)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  // Joints
+  Object.entries(joints).forEach(([name, pos]) => {
+    // Glow
+    const grad = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, JR + 8);
+    grad.addColorStop(0, 'rgba(245,166,35,0.35)');
+    grad.addColorStop(1, 'rgba(245,166,35,0)');
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, JR + 8, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    // Circle
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, JR, 0, Math.PI * 2);
+    ctx.fillStyle = name === dragging ? '#fbbf24' : '#f5a623';
+    ctx.fill();
+    ctx.strokeStyle = '#1a0800';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Label
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '8px Nunito';
+    ctx.textAlign = 'center';
+    ctx.fillText(name.replace('_left','L').replace('_right','R').replace('shoulder','shldr').replace('ankle','ankl'), pos.x, pos.y - JR - 3);
+  });
+}
+
+/* ─── EVENTS ─────────────────────────────────────────────────── */
+function coords(e) {
+  const r = canvas.getBoundingClientRect();
+  const sx = CW / r.width, sy = CH / r.height;
+  const cx = e.touches ? e.touches[0].clientX : e.clientX;
+  const cy = e.touches ? e.touches[0].clientY : e.clientY;
+  return { x: (cx - r.left) * sx, y: (cy - r.top) * sy };
+}
+
+function nearJoint(x, y) {
+  for (const [n, p] of Object.entries(joints)) {
+    const d = Math.hypot(x - p.x, y - p.y);
+    if (d <= JR + 6) return n;
+  }
+  return null;
+}
+
+canvas.addEventListener('mousedown', e => {
+  const { x, y } = coords(e);
+  const j = nearJoint(x, y);
+  if (j) { dragging = j; offX = x - joints[j].x; offY = y - joints[j].y; canvas.style.cursor = 'grabbing'; }
+});
+
+canvas.addEventListener('mousemove', e => {
+  const { x, y } = coords(e);
+  if (dragging) {
+    joints[dragging].x = Math.max(6, Math.min(CW - 6, x - offX));
+    joints[dragging].y = Math.max(6, Math.min(CH - 6, y - offY));
+    draw(); updatePrompt();
+  } else {
+    canvas.style.cursor = nearJoint(x, y) ? 'grab' : 'crosshair';
+  }
+});
+
+canvas.addEventListener('mouseup',    () => { dragging = null; canvas.style.cursor = 'crosshair'; draw(); });
+canvas.addEventListener('mouseleave', () => { dragging = null; });
+
+canvas.addEventListener('touchstart', e => { e.preventDefault(); const { x, y } = coords(e); const j = nearJoint(x, y); if (j) { dragging = j; offX = x - joints[j].x; offY = y - joints[j].y; } }, { passive: false });
+canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (!dragging) return; const { x, y } = coords(e); joints[dragging].x = Math.max(6, Math.min(CW-6, x-offX)); joints[dragging].y = Math.max(6, Math.min(CH-6, y-offY)); draw(); updatePrompt(); }, { passive: false });
+canvas.addEventListener('touchend',   () => { dragging = null; draw(); });
+
+/* ─── POSE CONTROLS ──────────────────────────────────────────── */
+function resetPose()        { joints = JSON.parse(JSON.stringify(DEFAULT));           draw(); updatePrompt(); showToast('Pose reset'); }
+function applyPreset(name)  { joints = JSON.parse(JSON.stringify(PRESETS[name]));     draw(); updatePrompt(); showToast('Preset: ' + name.replace(/_/g,' ')); }
+function mirrorPose() {
+  Object.values(joints).forEach(p => { p.x = CW - p.x; });
+  draw(); updatePrompt(); showToast('Pose mirrored');
+}
+
+function downloadCanvas() {
+  const link = document.createElement('a');
+  const t = document.getElementById('poseTitle').value.trim() || 'pose';
+  link.download = t.replace(/\s+/g,'_') + '_skeleton.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  showToast('Skeleton PNG saved!');
+}
+
+/* ─── CHARACTER BIBLE ────────────────────────────────────────── */
+const bibleImages = {};
+
+const SLOT_EMOJIS = {
+  hair:'💇', eyes:'👁', nose:'👃', lips:'💋', skin:'🎨',
+  hands:'🤲', top:'👕', bottom:'👖', shoes:'👟', cape:'🦸', accessories:'💎'
+};
+
+function triggerUpload(slot) { document.getElementById('file-' + slot).click(); }
+
+function handleUpload(e, slot) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const b64 = ev.target.result;
+    bibleImages[slot] = b64;
+    const prev = document.getElementById('prev-' + slot);
+    prev.innerHTML = `<img src="${b64}" alt="${slot}">`;
+    updatePrompt();
+    showToast(slot.charAt(0).toUpperCase() + slot.slice(1) + ' uploaded ✓');
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearSlot(slot) {
+  delete bibleImages[slot];
+  const prev = document.getElementById('prev-' + slot);
+  prev.innerHTML = SLOT_EMOJIS[slot] || '📎';
+  document.getElementById('file-' + slot).value = '';
+  updatePrompt();
+}
+
+/* ─── PROMPT BUILDER ─────────────────────────────────────────── */
+const g = id => document.getElementById(id);
+const gv = id => g(id)?.value?.trim() || '';
+
+function buildPrompt() {
+  const name    = gv('charName')  || 'character';
+  const emotion = gv('emotion');
+  const facing  = gv('facing')   || 'front';
+
+  const parts = [
+    '3D cartoon style',
+    'vibrant colours',
+    'soft cel shading',
+    'high quality render',
+    'full body visible',
+    'complete head included',
+    'no cropping',
+    'full character in frame head to toe',
+    'wide shot',
+    'character centred',
+    facing.replace('_',' ') + ' view'
+  ];
+
+  if (emotion) parts.push(emotion.toLowerCase() + ' expression');
+  parts.push('character: ' + name);
+
+  const map = [
+    ['hair', 'col-hair', 'hair'],
+    ['eyes', 'col-eyes', 'eyes'],
+    ['nose', null,       'nose'],
+    ['lips', 'col-lips', 'lips'],
+    ['skin', 'col-skin', 'skin tone'],
+    ['hands', null,      'hands'],
+    ['top',    'col-top',    'outfit top'],
+    ['bottom', 'col-bottom', 'outfit bottom'],
+    ['shoes',  'col-shoes',  'footwear'],
+    ['cape',   'col-cape',   'cape'],
+    ['accessories', null, 'accessories']
+  ];
+
+  map.forEach(([id, colId, label]) => {
+    const desc = gv('desc-' + id);
+    const col  = colId ? g(colId)?.value : null;
+    if (desc) parts.push(label + ': ' + desc + (col ? ' (colour ' + col + ')' : ''));
+  });
+
+  parts.push('consistent character design', 'comic character ready', 'clean background');
+  return parts.join(', ');
+}
+
+function updatePrompt() { g('promptPreview').textContent = buildPrompt(); }
+
+function copyPrompt() {
+  navigator.clipboard.writeText(buildPrompt()).then(() => showToast('Prompt copied! 📋'));
+}
+
+/* ─── EXPORT / IMPORT ────────────────────────────────────────── */
+function getBible() {
+  const slots = ['hair','eyes','nose','lips','skin','hands','top','bottom','shoes','cape','accessories'];
+  const snap = {};
+  slots.forEach(s => {
+    snap[s] = {
+      image:      bibleImages[s] || null,
+      descriptor: gv('desc-' + s),
+      colour:     g('col-' + s) ? g('col-' + s).value : null
+    };
+  });
+  return snap;
+}
+
+function exportJSON() {
+  const title = gv('poseTitle');
+  if (!title) { showToast('⚠️ Add a title before exporting!'); return; }
+
+  const out = {
+    _tool:      '3C Character Pose Builder',
+    _repo:      'https://github.com/[your-username]/3c-character-pose-builder',
+    _watermark: 'Built with LOVE by Claude (Anthropic) × Chef Anica · 3C Thread To Success Cooking Lab 🧪👨‍🍳',
+    character:   gv('charName'),
+    title:       title,
+    emotion:     gv('emotion'),
+    facing:      gv('facing') || 'front',
+    pose: { joints: JSON.parse(JSON.stringify(joints)) },
+    bible:       getBible(),
+    ai_prompt:   buildPrompt(),
+    exported_at: new Date().toISOString()
+  };
+
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = title.replace(/\s+/g,'_') + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✅ ' + title + '.json exported!');
+}
+
+function loadJSON() { g('loadJSONFile').click(); }
+
+function handleLoadJSON(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      if (d.character) g('charName').value  = d.character;
+      if (d.title)     g('poseTitle').value = d.title;
+      if (d.emotion)   g('emotion').value   = d.emotion;
+      if (d.facing)    g('facing').value    = d.facing;
+      if (d.pose?.joints) { joints = JSON.parse(JSON.stringify(d.pose.joints)); draw(); }
+      if (d.bible) {
+        Object.entries(d.bible).forEach(([slot, val]) => {
+          if (val.descriptor && g('desc-' + slot)) g('desc-' + slot).value = val.descriptor;
+          if (val.colour    && g('col-'  + slot))  g('col-'  + slot).value = val.colour;
+          if (val.image) {
+            bibleImages[slot] = val.image;
+            const prev = g('prev-' + slot);
+            if (prev) prev.innerHTML = `<img src="${val.image}" alt="${slot}">`;
+          }
+        });
+      }
+      updatePrompt();
+      showToast('✅ ' + (d.title || d.character || 'Character') + ' loaded!');
+    } catch { showToast('❌ Invalid JSON file'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+/* ─── LIVE INPUT LISTENERS ───────────────────────────────────── */
+document.querySelectorAll('.slot-desc, .field, input[type="color"]')
+  .forEach(el => el.addEventListener('input', updatePrompt));
+
+/* ─── TOAST ──────────────────────────────────────────────────── */
+let _tTimer = null;
+function showToast(msg) {
+  const t = g('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(_tTimer);
+  _tTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ─── INIT ───────────────────────────────────────────────────── */
+draw();
+updatePrompt();
+</script>
+</body>
+</html>
