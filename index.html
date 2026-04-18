@@ -80,17 +80,29 @@ header::after {
 }
 
 .brand-text h1 {
-  font-family: 'Cinzel', serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.1;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  color: #c4b5fd;
+  line-height: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.brand-text h2 {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: #d8b4fe;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 16px rgba(196,181,253,0.6);
 }
 .brand-text p {
   font-size: 9px;
   color: var(--gold);
   letter-spacing: 2.5px;
   text-transform: uppercase;
+  margin-top: 1px;
 }
 
 .header-fields {
@@ -496,7 +508,8 @@ footer em { color: var(--gold); font-style: normal; }
   <div class="brand">
     <div class="brand-icon">🎭</div>
     <div class="brand-text">
-      <h1>3C Character Pose Builder</h1>
+      <h1>3C Cartoon Character</h1>
+      <h2>Pose Builder</h2>
       <p>3C Thread To Success · Cooking Lab</p>
     </div>
   </div>
@@ -564,6 +577,23 @@ footer em { color: var(--gold); font-style: normal; }
       <span class="panel-label">📖 Character Bible</span>
     </div>
     <div class="bible-scroll" id="bibleScroll">
+
+      <!-- MASTER CHARACTER IMAGE -->
+      <div class="slot" style="border-color: var(--purple); background: linear-gradient(135deg, #0f0a1e, #141028);">
+        <div style="font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">⭐ Master Character Reference</div>
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-master" onclick="triggerUpload('master')" style="width:70px;height:90px;border-color:var(--purple);">🦸</div>
+          <div class="slot-body">
+            <div class="slot-name" style="color:var(--gold);">Full Character Image</div>
+            <textarea class="slot-desc" id="desc-master" rows="4" placeholder="Upload the complete character image (head to boots). This is the PRIMARY reference — the AI must replicate this exactly. All colours, outfit details, accessories and the chest diamond are derived from this image. Do not invent or change anything not shown here."></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <button class="btn-up" onclick="triggerUpload('master')" style="border-color:var(--purple-light);color:var(--purple-light);">📎 Upload Full Character</button>
+          <button class="btn-clr" onclick="clearSlot('master')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-master" accept="image/*" onchange="handleUpload(event,'master')">
+      </div>
 
       <div class="section-tag">Face Features</div>
 
@@ -634,7 +664,21 @@ footer em { color: var(--gold); font-style: normal; }
         <input type="file" id="file-lips" accept="image/*" onchange="handleUpload(event,'lips')">
       </div>
 
-      <!-- SKIN -->
+      <!-- EARS -->
+      <div class="slot">
+        <div class="slot-row">
+          <div class="slot-thumb" id="prev-ears" onclick="triggerUpload('ears')">👂</div>
+          <div class="slot-body">
+            <div class="slot-name">Ears</div>
+            <textarea class="slot-desc" id="desc-ears" rows="2" placeholder="e.g. small rounded ears, close to head, warm skin tone, subtle shading"></textarea>
+          </div>
+        </div>
+        <div class="slot-foot">
+          <button class="btn-up" onclick="triggerUpload('ears')">📎 Upload</button>
+          <button class="btn-clr" onclick="clearSlot('ears')">✕ Clear</button>
+        </div>
+        <input type="file" id="file-ears" accept="image/*" onchange="handleUpload(event,'ears')">
+      </div>
       <div class="slot">
         <div class="slot-row">
           <div class="slot-thumb" id="prev-skin" onclick="triggerUpload('skin')">🎨</div>
@@ -676,12 +720,11 @@ footer em { color: var(--gold); font-style: normal; }
         <div class="slot-row">
           <div class="slot-thumb" id="prev-top" onclick="triggerUpload('top')">👕</div>
           <div class="slot-body">
-            <div class="slot-name">Outfit Top</div>
-            <textarea class="slot-desc" id="desc-top" rows="2" placeholder="e.g. purple superhero suit, gold diamond shield logo on chest, armour panelling"></textarea>
+            <div class="slot-name">Outfit Top — refer to master image for exact colours</div>
+            <textarea class="slot-desc" id="desc-top" rows="2" placeholder="e.g. dark navy/purple superhero suit, gold trim lines, armour panelling, exact gold circular diamond emblem centred on chest — do not move or resize the emblem"></textarea>
           </div>
         </div>
         <div class="slot-foot">
-          <div class="colour-pick">Colour: <input type="color" id="col-top" value="#5b21b6"></div>
           <button class="btn-up" onclick="triggerUpload('top')">📎 Upload</button>
           <button class="btn-clr" onclick="clearSlot('top')">✕ Clear</button>
         </div>
@@ -693,29 +736,27 @@ footer em { color: var(--gold); font-style: normal; }
         <div class="slot-row">
           <div class="slot-thumb" id="prev-bottom" onclick="triggerUpload('bottom')">👖</div>
           <div class="slot-body">
-            <div class="slot-name">Outfit Bottom</div>
-            <textarea class="slot-desc" id="desc-bottom" rows="2" placeholder="e.g. dark navy shorts, armour detail panels, gold trim edges"></textarea>
+            <div class="slot-name">Outfit Bottom — refer to master image for exact colours</div>
+            <textarea class="slot-desc" id="desc-bottom" rows="2" placeholder="e.g. tight dark navy trousers, same suit material as top, clean line from waist to boots, no extra detail unless in master image"></textarea>
           </div>
         </div>
         <div class="slot-foot">
-          <div class="colour-pick">Colour: <input type="color" id="col-bottom" value="#1e1b4b"></div>
           <button class="btn-up" onclick="triggerUpload('bottom')">📎 Upload</button>
           <button class="btn-clr" onclick="clearSlot('bottom')">✕ Clear</button>
         </div>
         <input type="file" id="file-bottom" accept="image/*" onchange="handleUpload(event,'bottom')">
       </div>
 
-      <!-- SHOES -->
+      <!-- BOOTS -->
       <div class="slot">
         <div class="slot-row">
-          <div class="slot-thumb" id="prev-shoes" onclick="triggerUpload('shoes')">👟</div>
+          <div class="slot-thumb" id="prev-shoes" onclick="triggerUpload('shoes')">🥾</div>
           <div class="slot-body">
-            <div class="slot-name">Shoes / Boots</div>
-            <textarea class="slot-desc" id="desc-shoes" rows="2" placeholder="e.g. purple armour boots, gold trim, ankle height, rounded toe"></textarea>
+            <div class="slot-name">Boots — refer to master image for exact colours</div>
+            <textarea class="slot-desc" id="desc-shoes" rows="2" placeholder="e.g. dark navy knee-high boots, gold trim on top and front, same colour family as suit, always fully visible — never cut off at ankles"></textarea>
           </div>
         </div>
         <div class="slot-foot">
-          <div class="colour-pick">Colour: <input type="color" id="col-shoes" value="#4c1d95"></div>
           <button class="btn-up" onclick="triggerUpload('shoes')">📎 Upload</button>
           <button class="btn-clr" onclick="clearSlot('shoes')">✕ Clear</button>
         </div>
@@ -727,12 +768,11 @@ footer em { color: var(--gold); font-style: normal; }
         <div class="slot-row">
           <div class="slot-thumb" id="prev-cape" onclick="triggerUpload('cape')">🦸</div>
           <div class="slot-body">
-            <div class="slot-name">Cape / Extra Layer</div>
-            <textarea class="slot-desc" id="desc-cape" rows="2" placeholder="e.g. full purple flowing cape, gold inner lining, attached at shoulders"></textarea>
+            <div class="slot-name">Cape — refer to master image for exact colours</div>
+            <textarea class="slot-desc" id="desc-cape" rows="2" placeholder="e.g. full flowing purple cape, gold inner lining edge, attached at both shoulders via gold clasps, always flows behind character"></textarea>
           </div>
         </div>
         <div class="slot-foot">
-          <div class="colour-pick">Colour: <input type="color" id="col-cape" value="#6d28d9"></div>
           <button class="btn-up" onclick="triggerUpload('cape')">📎 Upload</button>
           <button class="btn-clr" onclick="clearSlot('cape')">✕ Clear</button>
         </div>
@@ -769,7 +809,7 @@ footer em { color: var(--gold); font-style: normal; }
 
 <!-- ═══ FOOTER ═════════════════════════════════════════════════ -->
 <footer>
-  Built with ❤️ by Claude (Anthropic) × Chef Anica · 3C Thread To Success Cooking Lab</em>
+  Built with <em>❤️</em> by Claude (Anthropic) × Chef Anica · <em>3C Thread To Success Cooking Lab 🧪👨‍🍳</em>
 </footer>
 
 <div class="toast" id="toast"></div>
@@ -956,8 +996,8 @@ function downloadCanvas() {
 const bibleImages = {};
 
 const SLOT_EMOJIS = {
-  hair:'💇', eyes:'👁', nose:'👃', lips:'💋', skin:'🎨',
-  hands:'🤲', top:'👕', bottom:'👖', shoes:'👟', cape:'🦸', accessories:'💎'
+  master:'🦸', hair:'💇', eyes:'👁', ears:'👂', nose:'👃', lips:'💋', skin:'🎨',
+  hands:'🤲', top:'👕', bottom:'👖', shoes:'🥾', cape:'🦸', accessories:'💎'
 };
 
 function triggerUpload(slot) { document.getElementById('file-' + slot).click(); }
@@ -994,45 +1034,55 @@ function buildPrompt() {
   const emotion = gv('emotion');
   const facing  = gv('facing')   || 'front';
 
-  const parts = [
+  // Core directive — always leads the prompt
+  const directive = [
+    'USE EXACT REFERENCE IMAGE PROVIDED',
+    'replicate the face and full outfit precisely from head to boots',
+    'do not cut off any part of the character unless specifically requested',
+    'do not invent or add any feature not present in the reference image',
+    'all outfit details are fixed and must not change position or design',
+    'the chest emblem stays exactly on the chest — do not move resize or remove it',
+    'derive all colours from the reference image — do not flatten or substitute colours',
+    'colour variations due to lighting are acceptable but the colour family must remain identical',
+    'complete character in frame from head to boots',
+    'full body visible no cropping',
     '3D cartoon style',
-    'vibrant colours',
-    'soft cel shading',
-    'high quality render',
-    'full body visible',
-    'complete head included',
-    'no cropping',
-    'full character in frame head to toe',
-    'wide shot',
-    'character centred',
+    'vibrant colours soft cel shading high quality render',
     facing.replace('_',' ') + ' view'
   ];
 
-  if (emotion) parts.push(emotion.toLowerCase() + ' expression');
-  parts.push('character: ' + name);
+  if (emotion) directive.push(emotion.toLowerCase() + ' expression');
+  directive.push('character: ' + name);
 
+  // Additional descriptor details
   const map = [
-    ['hair', 'col-hair', 'hair'],
-    ['eyes', 'col-eyes', 'eyes'],
-    ['nose', null,       'nose'],
-    ['lips', 'col-lips', 'lips'],
-    ['skin', 'col-skin', 'skin tone'],
-    ['hands', null,      'hands'],
-    ['top',    'col-top',    'outfit top'],
-    ['bottom', 'col-bottom', 'outfit bottom'],
-    ['shoes',  'col-shoes',  'footwear'],
-    ['cape',   'col-cape',   'cape'],
-    ['accessories', null, 'accessories']
+    ['master',       'master reference image'],
+    ['hair',         'hair'],
+    ['eyes',         'eyes'],
+    ['ears',         'ears'],
+    ['nose',         'nose'],
+    ['lips',         'lips'],
+    ['skin',         'skin tone'],
+    ['hands',        'hands'],
+    ['top',          'outfit top'],
+    ['bottom',       'outfit bottom'],
+    ['shoes',        'boots'],
+    ['cape',         'cape'],
+    ['accessories',  'accessories']
   ];
 
-  map.forEach(([id, colId, label]) => {
+  map.forEach(([id, label]) => {
     const desc = gv('desc-' + id);
-    const col  = colId ? g(colId)?.value : null;
-    if (desc) parts.push(label + ': ' + desc + (col ? ' (colour ' + col + ')' : ''));
+    if (desc) directive.push(label + ': ' + desc);
   });
 
-  parts.push('consistent character design', 'comic character ready', 'clean background');
-  return parts.join(', ');
+  directive.push(
+    'consistent character design throughout',
+    'same face same outfit same accessories in every generation',
+    'clean background unless otherwise specified'
+  );
+
+  return directive.join(', ');
 }
 
 function updatePrompt() { g('promptPreview').textContent = buildPrompt(); }
@@ -1043,7 +1093,7 @@ function copyPrompt() {
 
 /* ─── EXPORT / IMPORT ────────────────────────────────────────── */
 function getBible() {
-  const slots = ['hair','eyes','nose','lips','skin','hands','top','bottom','shoes','cape','accessories'];
+  const slots = ['master','hair','eyes','ears','nose','lips','skin','hands','top','bottom','shoes','cape','accessories'];
   const snap = {};
   slots.forEach(s => {
     snap[s] = {
@@ -1062,7 +1112,7 @@ function exportJSON() {
   const out = {
     _tool:      '3C Character Pose Builder',
     _repo:      'https://github.com/[your-username]/3c-character-pose-builder',
-    _watermark: 'Built with LOVE by Claude (Anthropic) × Chef Anica · 3C Thread To Success Cooking Lab 🧪👨‍🍳',
+    _watermark: 'Built with ❤️ by Claude (Anthropic) × Chef Anica · 3C Thread To Success Cooking Lab 🧪👨‍🍳',
     character:   gv('charName'),
     title:       title,
     emotion:     gv('emotion'),
