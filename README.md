@@ -1,6 +1,6 @@
 # 🎭 3C Character Pose Builder
 
-> **3C Thread To Success Cooking Lab** · Built with LOVE by Claude (Anthropic) × Chef Anica 🧪👨‍🍳
+> **3C Thread To Success**
 
 A browser-based tool for building, posing, and exporting **Character Bible JSON files** for use with AI image generators (Midjourney, Leonardo AI, Stable Diffusion, and more).
 
